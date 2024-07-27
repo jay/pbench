@@ -29,6 +29,21 @@ public:
             fwprintf(stderr, L"Failed to get process time information: %s\n",
                      (LPCWSTR)AtlGetErrorDescription(HRESULT_FROM_WIN32(GetLastError())));
         }
+
+#if 0
+        {
+          ULARGE_INTEGER    large;
+
+          large.LowPart  = userTime.dwLowDateTime;
+          large.HighPart = userTime.dwHighDateTime;
+          wprintf(L"userTime: %I64d\n", large);
+
+          large.LowPart  = kernelTime.dwLowDateTime;
+          large.HighPart = kernelTime.dwHighDateTime;
+          wprintf(L"kernelTime: %I64d\n", large);
+        }
+#endif
+
         m_KernelTime = kernelTime.GetTime();
         m_UserTime = userTime.GetTime();
 

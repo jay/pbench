@@ -111,8 +111,9 @@ void GetTotalMinMax(const std::list<T> & list, T & total, T & min, T & max)
     max = *minmax.second;
 
     total = 0;
-    for (auto t : list)
+    for (auto it = std::begin(list); it != std::end(list); ++it)
     {
+        auto t = *it;
         total += t;
     }
 }
@@ -152,14 +153,14 @@ CString FormatAvgMinMaxIO(std::list<ULONGLONG> count, std::list<ULONGLONG> bytes
     CString result;
     if (count.size() > 1)
     {
-        result.Format(L"%8lld (%8lld KB)  %8lld (%8lld KB)  %8lld (%8lld KB)",
+        result.Format(L"%8I64d (%I64d KB)  %I64d (%I64d KB)  %I64d (%I64d KB)",
                       countTotal / count.size(), bytesTotal / bytes.size() / 1024,
                       countMin, bytesMin / 1024,
                       countMax, bytesMax / 1024);
     }
     else
     {
-        result.Format(L"%8lld (%8lld KB)", countTotal, bytesTotal / 1024) ;
+        result.Format(L"%8I64d (%I64d KB)", countTotal, bytesTotal / 1024) ;
     }
 
     return result;
@@ -174,12 +175,12 @@ CString FormatAvgMinMaxMem(std::list<LONGLONG> list)
     CString result;
     if (list.size() > 1)
     {
-        result.Format(L"%8lld KB  %8lld KB  %8lld KB",
+        result.Format(L"%8I64d KB  %I64d KB  %I64d KB",
                       total / list.size() / 1024, min / 1024, max / 1024);
     }
     else
     {
-        result.Format(L"%8lld KB", total / 1024);
+        result.Format(L"%8I64d KB", total / 1024);
     }
 
     return result;
@@ -210,7 +211,8 @@ int _tmain(int argc, _TCHAR* argv[])
     if (argc <= 1)
     {
         wprintf(L"Process benchmark utility version %d.%d.%d. Copyright (C) 2017 Ivan Zhakov\n\n",
-                PBENCH_VERSION_MAJOR, PBENCH_VERSION_MINOR, PBENCH_VERSION_PATCH);
+                //PBENCH_VERSION_MAJOR, PBENCH_VERSION_MINOR, PBENCH_VERSION_PATCH);
+                0,0,0);
         wprintf(L"usage: pbench [OPTIONS] COMMAND [ARGS]\n");
         wprintf(L"Available options:\n");
         wprintf(L"  --pid PID      Also benchmark process with specified process ID\n");
@@ -418,6 +420,11 @@ int _tmain(int argc, _TCHAR* argv[])
         peakWorkingSize.push_back(memCounters.PeakWorkingSetSize);
     }
 
+    if(count > 1) {
+      wprintf(L"\nThe command was run %d times.\n\n", count);
+      wprintf(L"                 average     minimum     maximum\n");
+    }
+
     wprintf(L"   Real time: %s\n", FormatAvgMinMaxTime(realTime).GetString());
     wprintf(L"    CPU time: %s\n", FormatAvgMinMaxTime(cpuTime).GetString());
     wprintf(L"   User time: %s\n", FormatAvgMinMaxTime(userTime).GetString());
@@ -426,7 +433,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #if 0
     ULONG64 cpuCycleCount;
     QueryProcessCycleTime(pi.hProcess, &cpuCycleCount);
-    printf(" CPU cycles: %lld\n", cpuCycleCount);
+    printf(" CPU cycles: %I64d\n", cpuCycleCount);
 #endif
 
     wprintf(L"     Read IO: %s\n", FormatAvgMinMaxIO(readCount, readBytes).GetString());
@@ -456,9 +463,9 @@ int _tmain(int argc, _TCHAR* argv[])
         ioCounters.WriteTransferCount = it->m_endCounters.IOCounters().WriteTransferCount - it->m_startCounters.IOCounters().WriteTransferCount;
         ioCounters.OtherTransferCount = it->m_endCounters.IOCounters().OtherTransferCount - it->m_startCounters.IOCounters().OtherTransferCount;
 
-        wprintf(L"     Read IO: %8lld (%lld KB)\n", ioCounters.ReadOperationCount, ioCounters.ReadTransferCount / 1024);
-        wprintf(L"    Write IO: %8lld (%lld KB)\n", ioCounters.WriteOperationCount, ioCounters.WriteTransferCount / 1024);
-        wprintf(L"    Other IO: %8lld (%lld KB)\n", ioCounters.OtherOperationCount, ioCounters.OtherTransferCount / 1024);
+        wprintf(L"     Read IO: %I64d (%I64d KB)\n", ioCounters.ReadOperationCount, ioCounters.ReadTransferCount / 1024);
+        wprintf(L"    Write IO: %I64d (%I64d KB)\n", ioCounters.WriteOperationCount, ioCounters.WriteTransferCount / 1024);
+        wprintf(L"    Other IO: %I64d (%I64d KB)\n", ioCounters.OtherOperationCount, ioCounters.OtherTransferCount / 1024);
     }
 
     wprintf(L"\n");

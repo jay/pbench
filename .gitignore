@@ -4,3 +4,4 @@ _bin/*
 bin
 obj
 *.aps
+*.suo

@@ -1,23 +1,14 @@
+# MODIFIED
+
+**This is a version of pbench that I modified to remove minimum field width
+from the IO output format and to build with an old version of Visual Studio.**
+
+For testing curl issue https://github.com/curl/curl/pull/14274
+
 # pbench
 
 The pbench is Windows equivalent to Unix "time" command to measure
 process resource usage.
-
-## Installation
-
-> [!NOTE]
-> Command prompt window should be restarted after installation to
-> find installed pbench.exe
-
-Using Windows Installer command:
-1. Run the following command from the command prompt:
-   ```
-   msiexec.exe /qb /i https://github.com/chemodax/pbench/releases/download/0.7.0/pbench-x64.msi
-   ```
-
-Using Windows Installer GUI:
-1. Download [latest release](https://github.com/chemodax/pbench/releases/latest)
-2. Run the installation package
 
 ## Syntax
 
@@ -35,24 +26,26 @@ pbench [OPTIONS] COMMAND [ARGS]
 
 ## Examples
 
-Measure performance of `curl http://example.com` command:
+Measure performance of `curl -v -4 localhost:6789` command:
 
 ```Batchfile
-pbench --stdout-nul curl http://example.com
+pbench --count 5 curl -v -4 localhost:6789
 ```
 
 ```Console
-==== curl http://example.com ====
+== Performance of curl -v -4 localhost:6789
 
-== Performance of curl http://example.com
-   Real time:    0.299 s
-    CPU time:    0.015 s
-   User time:    0.000 s
- Kernel time:    0.015 s
-     Read IO:        0 (       0 KB)
-    Write IO:        1 (       1 KB)
-    Other IO:      127 (       1 KB)
-Peak WS size:     6196 KB
+The command was run 5 times.
 
-  Total time:    0.303 s
+                 average     minimum     maximum
+   Real time:    1.042 s     1.035 s     1.046 s
+    CPU time:    0.012 s     0.000 s     0.015 s
+   User time:    0.006 s     0.000 s     0.015 s
+ Kernel time:    0.006 s     0.000 s     0.015 s
+     Read IO:        1 (0 KB)  1 (0 KB)  1 (0 KB)
+    Write IO:        0 (0 KB)  0 (0 KB)  0 (0 KB)
+    Other IO:      134 (2 KB)  132 (2 KB)  135 (2 KB)
+Peak WS size:     6059 KB  6040 KB  6076 KB
+
+  Total time:    5.215 s
 ```
